@@ -1,6 +1,10 @@
-import { createGlobalStyle } from 'styled-components';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import Router from './Router';
 import { ReactQueryDevtools } from "react-query/devtools";
+import { lightTheme, darkTheme } from './theme';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { isDarkAtom } from './atoms';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,300;10..48,400;10..48,600&family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,300;1,400;1,500;1,600;1,700&display=swap');
@@ -65,10 +69,15 @@ a{
 `;
 
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
+ 
   return(<> 
-  <GlobalStyle />
-  <Router />
-  < ReactQueryDevtools initialIsOpen={false} / >
+   <ThemeProvider theme={isDark? lightTheme: darkTheme}>
+    
+    <GlobalStyle />
+    <Router />
+    < ReactQueryDevtools initialIsOpen={false} / >
+  </ThemeProvider>
   </>
   );
 }

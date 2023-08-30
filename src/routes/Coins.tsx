@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { fetcher } from "../api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState,useRecoilValue } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
 padding:0px 20px;
@@ -14,11 +16,21 @@ height: 10vh;
 display: flex;
 align-items: center;
 justify-content: center;
+position: relative;
+button{
+  position: absolute;
+  right:0;
+  background-color: #eee;
+  border:1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+}
 `;
 const CoinList = styled.ul``;
 const Coin = styled.li`
-background-color:white;
-color:${(props)=>props.theme.bgColor};
+background-color:${(props)=>props.theme.cardBgColor};
+border: 1px solid white;
+color:${(props)=>props.theme.textColor};
 margin-bottom: 10px;
 border-radius: 14px;
 a{
@@ -59,7 +71,11 @@ interface CoinInterface {
 }
 
 function Coins(){
-  const {isLoading, data}=useQuery<CoinInterface[]>("allCoins", fetcher)
+  const {isLoading, data}=useQuery<CoinInterface[]>("allCoins", fetcher);
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = ()=>setDarkAtom((prev)=>!prev);
+  const isDark = useRecoilValue(isDarkAtom);
+  
  /*  const [coins, setCoins]=useState<CoinInterface[]>([]);
   const [loading, setLoading]= useState(true);
   useEffect(()=>{
@@ -74,7 +90,7 @@ function Coins(){
   return(
     <Container>
     <Helmet><title>Coin Lists</title></Helmet>
-    <Header><Title>Coin Lists</Title></Header>
+    <Header><Title>Coin Lists</Title> <button onClick={toggleDarkAtom}>{isDark? "Dark Mode":"Light Mode"}</button></Header>
     {isLoading ? (<Loader>Loading....</Loader>):  (<CoinList>
       {data?.slice(0,100).map((v)=>(
       <Coin key={v.id}><Link to={{
